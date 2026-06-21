@@ -1,36 +1,55 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import api from '../api/axios';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCarSide, faMotorcycle, faSquareParking, faCar, faUser, faTriangleExclamation, faCircleInfo, faLock, faEyeSlash, faEye, faLockOpen, faHand } from '@fortawesome/free-solid-svg-icons';
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import api from "../api/axios";
+import { Car, ShieldCheck, UserCog, Eye, EyeOff, AlertTriangle, Loader2 } from "lucide-react";
 
-const Login: React.FC = () => {
+export default function LoginPage() {
   const navigate = useNavigate();
   const { login, isLoggedIn } = useAuth();
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [role, setRole] = useState<"admin" | "petugas">("admin");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [usernameError, setUsernameError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
 
   // Redirect if already logged in
-  React.useEffect(() => {
-    if (isLoggedIn) navigate('/', { replace: true });
+  useEffect(() => {
+    if (isLoggedIn) navigate("/", { replace: true });
   }, [isLoggedIn, navigate]);
+
+  const validateUsername = (value: string): string => {
+    if (!value.trim()) return "Email tidak boleh kosong";
+    if (!value.trim().endsWith("@gmail.com")) return "Format email harus @gmail.com";
+    return "";
+  };
+
+  const validatePassword = (value: string): string => {
+    if (!value) return "Password tidak boleh kosong";
+    if (value.length <= 6) return "Password harus lebih dari 6 karakter";
+    return "";
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!username.trim() || !password.trim()) {
-      setError('Username dan password harus diisi');
-      return;
-    }
+    const uError = validateUsername(username);
+    const pError = validatePassword(password);
+    setUsernameError(uError);
+    setPasswordError(pError);
+    if (uError || pError) return;
 
     setLoading(true);
-    setError('');
+    setError("");
 
     try {
-      const res = await api.post('/auth/login', { username: username.trim(), password });
+      const res = await api.post("/auth/login", {
+        username: username.trim(),
+        password,
+      });
       const userData = res.data.data;
       login({
         id: userData.id,
@@ -38,133 +57,195 @@ const Login: React.FC = () => {
         role: userData.role,
         nama: userData.nama,
       });
-      navigate('/', { replace: true });
+      navigate("/", { replace: true });
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Login gagal. Periksa koneksi server.');
+      const resData = err.response?.data;
+      if (
+        resData?.data &&
+        typeof resData.data === "object" &&
+        typeof resData.data !== "string"
+      ) {
+        if (resData.data.username) setUsernameError(resData.data.username);
+        if (resData.data.password) setPasswordError(resData.data.password);
+      } else {
+        setError(resData?.message || "Login gagal. Periksa koneksi server.");
+      }
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-gradient-to-br from-orange-50 via-white to-orange-100">
-      {/* Animated background shapes */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-orange-300/30 to-orange-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '4s' }}></div>
-        <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-gradient-to-tr from-orange-200/20 to-yellow-300/20 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '6s' }}></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-orange-100/10 to-orange-200/10 rounded-full blur-3xl"></div>
-        {/* Floating parking icons */}
-        <div className="absolute top-20 left-20 text-4xl opacity-10 animate-bounce" style={{ animationDuration: '3s' }}><FontAwesomeIcon icon={faCarSide} /></div>
-        <div className="absolute top-40 right-32 text-3xl opacity-10 animate-bounce" style={{ animationDuration: '4s', animationDelay: '1s' }}><FontAwesomeIcon icon={faMotorcycle} /></div>
-        <div className="absolute bottom-32 left-40 text-5xl opacity-10 animate-bounce" style={{ animationDuration: '5s', animationDelay: '0.5s' }}><FontAwesomeIcon icon={faSquareParking} /></div>
-        <div className="absolute bottom-20 right-20 text-3xl opacity-10 animate-bounce" style={{ animationDuration: '3.5s', animationDelay: '2s' }}><FontAwesomeIcon icon={faCar} /></div>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-orange-100 flex items-center justify-center p-4">
+      <div className="w-full max-w-6xl bg-white rounded-3xl shadow-2xl overflow-hidden grid md:grid-cols-2">
 
-      <div className="relative z-10 w-full max-w-md mx-4">
-        {/* Logo & Title */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-orange-400 to-orange-600 rounded-2xl shadow-lg shadow-orange-500/30 mb-4 transform hover:scale-105 transition-transform">
-            <span className="text-white font-extrabold text-3xl">P</span>
+        {/* Left Side */}
+        <div className="bg-gradient-to-br from-orange-500 to-orange-600 text-white p-10 flex flex-col justify-center items-center">
+          <div className="bg-white/20 p-6 rounded-full mb-6">
+            <Car size={70} />
           </div>
-          <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">
-            Smart<span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-orange-600">Parking</span>
+
+          <h1 className="text-4xl font-bold mb-3">
+            Smart Parking
           </h1>
-          <p className="text-gray-500 mt-2 text-sm">Sistem Manajemen Parkir Cerdas</p>
+
+          <p className="text-center text-orange-100 max-w-sm">
+            Sistem Manajemen Parkir Modern untuk mengelola kendaraan,
+            transaksi, dan laporan secara efisien.
+          </p>
         </div>
 
-        {/* Login Card */}
-        <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl shadow-orange-500/10 border border-orange-100/50 overflow-hidden">
-          {/* Header gradient bar */}
-          <div className="h-1.5 bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600"></div>
+        {/* Right Side */}
+        <div className="p-10 flex items-center justify-center">
+          <div className="w-full max-w-md">
 
-          <div className="p-8">
-            <h2 className="text-xl font-bold text-gray-800 mb-1">Selamat Datang <FontAwesomeIcon icon={faHand} /></h2>
-            <p className="text-sm text-gray-500 mb-6">Masuk untuk mengakses sistem parkir</p>
+            <h2 className="text-3xl font-bold text-gray-800">
+              Selamat Datang
+            </h2>
 
+            <p className="text-gray-500 mt-2 mb-8">
+              Login untuk mengakses sistem Smart Parking
+            </p>
+
+            {/* Role Selector */}
+            <div className="bg-gray-100 p-1 rounded-xl flex mb-6">
+              <button
+                type="button"
+                onClick={() => setRole("admin")}
+                className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-lg transition-all ${
+                  role === "admin"
+                    ? "bg-orange-500 text-white shadow-md"
+                    : "text-gray-600 hover:text-gray-800"
+                }`}
+              >
+                <ShieldCheck size={18} />
+                Admin
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setRole("petugas")}
+                className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-lg transition-all ${
+                  role === "petugas"
+                    ? "bg-orange-500 text-white shadow-md"
+                    : "text-gray-600 hover:text-gray-800"
+                }`}
+              >
+                <UserCog size={18} />
+                Petugas
+              </button>
+            </div>
+
+            {/* Global Error */}
             {error && (
-              <div className="bg-red-50 text-red-600 p-3 rounded-xl mb-5 border border-red-200 text-sm flex items-center gap-2 animate-in fade-in slide-in-from-top-1">
-                <span><FontAwesomeIcon icon={faTriangleExclamation} /></span>
+              <div className="bg-red-50 text-red-600 p-3 rounded-xl mb-5 border border-red-200 text-sm flex items-center gap-2">
+                <AlertTriangle size={16} />
                 <span>{error}</span>
               </div>
             )}
 
-            <form onSubmit={handleSubmit}>
-              <div className="mb-5">
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  <FontAwesomeIcon icon={faUser} /> Username
+            {/* Form */}
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Username
                 </label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    placeholder="Masukkan username"
-                    className="w-full px-4 py-3 bg-gray-50/80 border-2 border-gray-200 rounded-xl focus:border-orange-400 focus:bg-white focus:ring-4 focus:ring-orange-100 outline-none transition-all text-gray-800 placeholder-gray-400"
-                    autoComplete="username"
-                    autoFocus
-                  />
-                </div>
+                <input
+                  type="text"
+                  value={username}
+                  onChange={(e) => {
+                    setUsername(e.target.value);
+                    if (usernameError) setUsernameError(validateUsername(e.target.value));
+                  }}
+                  onBlur={() => setUsernameError(validateUsername(username))}
+                  placeholder="Masukkan username"
+                  className={`w-full border rounded-xl px-4 py-3 outline-none transition-all ${
+                    usernameError
+                      ? "border-red-400 focus:ring-2 focus:ring-red-200 focus:border-red-400"
+                      : "border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                  }`}
+                  autoFocus
+                />
+                {usernameError && (
+                  <p className="text-red-500 text-xs mt-1.5 flex items-center gap-1">
+                    <AlertTriangle size={12} /> {usernameError}
+                  </p>
+                )}
               </div>
 
-              <div className="mb-6">
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  <FontAwesomeIcon icon={faLock} /> Password
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Password
                 </label>
                 <div className="relative">
                   <input
-                    type={showPassword ? 'text' : 'password'}
+                    type={showPassword ? "text" : "password"}
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                      if (passwordError) setPasswordError(validatePassword(e.target.value));
+                    }}
+                    onBlur={() => setPasswordError(validatePassword(password))}
                     placeholder="Masukkan password"
-                    className="w-full px-4 py-3 pr-12 bg-gray-50/80 border-2 border-gray-200 rounded-xl focus:border-orange-400 focus:bg-white focus:ring-4 focus:ring-orange-100 outline-none transition-all text-gray-800 placeholder-gray-400"
-                    autoComplete="current-password"
+                    className={`w-full border rounded-xl px-4 py-3 pr-12 outline-none transition-all ${
+                      passwordError
+                        ? "border-red-400 focus:ring-2 focus:ring-red-200 focus:border-red-400"
+                        : "border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    }`}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-orange-500 transition-colors p-1"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-orange-500 transition-colors"
                   >
-                    {showPassword ? <FontAwesomeIcon icon={faEyeSlash} /> : <FontAwesomeIcon icon={faEye} />}
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                   </button>
                 </div>
+                {passwordError && (
+                  <p className="text-red-500 text-xs mt-1.5 flex items-center gap-1">
+                    <AlertTriangle size={12} /> {passwordError}
+                  </p>
+                )}
+              </div>
+
+              <div className="flex justify-between items-center text-sm">
+                <label className="flex items-center gap-2 text-gray-600 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                    className="accent-orange-500"
+                  />
+                  Remember Me
+                </label>
+
+                <button
+                  type="button"
+                  className="text-orange-500 hover:text-orange-600 font-medium"
+                >
+                  Lupa Password?
+                </button>
               </div>
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3.5 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold rounded-xl shadow-lg shadow-orange-500/30 transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed transform hover:scale-[1.02] active:scale-[0.98]"
+                className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-xl font-semibold transition flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <>
-                    <span className="animate-spin inline-block w-5 h-5 border-2 border-white/30 border-t-white rounded-full"></span>
-                    <span>Memproses...</span>
+                    <Loader2 size={20} className="animate-spin" />
+                    Memproses...
                   </>
                 ) : (
-                  <>
-                    <span><FontAwesomeIcon icon={faLockOpen} /></span>
-                    <span>Masuk ke Sistem</span>
-                  </>
+                  <>Login sebagai {role === "admin" ? "Admin" : "Petugas"}</>
                 )}
               </button>
             </form>
-          </div>
 
-          {/* Footer info */}
-          <div className="bg-orange-50/50 border-t border-orange-100/50 px-8 py-4">
-            <div className="flex items-start gap-2 text-xs text-orange-700/70">
-              <span className="mt-0.5"><FontAwesomeIcon icon={faCircleInfo} /></span>
-              <span>Hubungi administrator jika mengalami masalah login atau lupa password.</span>
-            </div>
           </div>
         </div>
-
-        {/* Bottom text */}
-        <p className="text-center text-xs text-gray-400 mt-6">
-          © 2026 SmartParking System • v2.0
-        </p>
       </div>
     </div>
   );
-};
-
-export default Login;
+}

@@ -7,6 +7,7 @@ public class DashboardResponse {
     private int jumlahMobil;
     private int jumlahMotor;
     private int kapasitasTersedia;
+    private int totalKapasitas;
     private List<KendaraanAktifResponse> listAktif;
 
     public DashboardResponse() {}
@@ -22,6 +23,9 @@ public class DashboardResponse {
 
     public int getKapasitasTersedia() { return kapasitasTersedia; }
     public void setKapasitasTersedia(int kapasitasTersedia) { this.kapasitasTersedia = kapasitasTersedia; }
+    
+    public int getTotalKapasitas() { return totalKapasitas; }
+    public void setTotalKapasitas(int totalKapasitas) { this.totalKapasitas = totalKapasitas; }
 
     public List<KendaraanAktifResponse> getListAktif() { return listAktif; }
     public void setListAktif(List<KendaraanAktifResponse> listAktif) { this.listAktif = listAktif; }

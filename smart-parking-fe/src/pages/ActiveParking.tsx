@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '../components/Navbar';
+import StatCard from '../components/StatCard';
 import VehicleBadge from '../components/VehicleBadge';
 import { parkingApi } from '../api/parking';
 import type { DashboardData } from '../types/parking';
 import { formatDurasi, formatWaktu } from '../utils/format';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCarSide, faStopwatch, faTriangleExclamation, faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
+import { faCarSide, faMotorcycle, faCar, faStopwatch, faTriangleExclamation, faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 
 const ActiveParking: React.FC = () => {
   const [data, setData] = useState<DashboardData | null>(null);
@@ -49,6 +50,35 @@ const ActiveParking: React.FC = () => {
           </div>
         )}
 
+        {data && (
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+            <StatCard 
+              label="Kendaraan Aktif" 
+              value={data.kendaraanAktif} 
+              icon={<FontAwesomeIcon icon={faCarSide} />} 
+              subLabel={`${data.totalKapasitas > 0 ? ((data.kendaraanAktif / data.totalKapasitas) * 100).toFixed(0) : 0}% terisi`}
+              progress={data.totalKapasitas > 0 ? (data.kendaraanAktif / data.totalKapasitas) * 100 : 0}
+              color="teal"
+            />
+            <StatCard 
+              label="Mobil" 
+              value={data.jumlahMobil} 
+              icon={<FontAwesomeIcon icon={faCar} />} 
+              subLabel={`${data.totalKapasitas > 0 ? ((data.jumlahMobil / data.totalKapasitas) * 100).toFixed(0) : 0}% dari kapasitas`}
+              progress={data.totalKapasitas > 0 ? (data.jumlahMobil / data.totalKapasitas) * 100 : 0}
+              color="blue"
+            />
+            <StatCard 
+              label="Motor" 
+              value={data.jumlahMotor} 
+              icon={<FontAwesomeIcon icon={faMotorcycle} />} 
+              subLabel={`${data.totalKapasitas > 0 ? ((data.jumlahMotor / data.totalKapasitas) * 100).toFixed(0) : 0}% dari kapasitas`}
+              progress={data.totalKapasitas > 0 ? (data.jumlahMotor / data.totalKapasitas) * 100 : 0}
+              color="pink"
+            />
+          </div>
+        )}
+
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
           <div className="p-5 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
@@ -73,7 +103,7 @@ const ActiveParking: React.FC = () => {
           
           <div className="overflow-x-auto">
             <table className="w-full text-sm text-left">
-              <thead className="bg-gray-50 text-gray-600 font-medium border-b border-gray-100">
+              <thead className="bg-teal-50 text-teal-800 font-medium border-b border-teal-100">
                 <tr>
                   <th className="px-5 py-3">Plat Nomor</th>
                   <th className="px-5 py-3">Jenis</th>

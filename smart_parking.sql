@@ -41,5 +41,5 @@ CREATE TABLE IF NOT EXISTS users (
 
 -- Default users (akan otomatis dibuat oleh DataSeeder saat aplikasi pertama kali dijalankan)
 INSERT IGNORE INTO users (username, password, role, nama) VALUES
-('admin', 'admin123', 'ADMIN', 'Administrator'),
-('petugas', 'petugas123', 'PETUGAS', 'Petugas Parkir');
+('admin@gmail.com', 'admin123', 'ADMIN', 'Administrator'),
+('petugas@gmail.com', 'petugas123', 'PETUGAS', 'Petugas Parkir');

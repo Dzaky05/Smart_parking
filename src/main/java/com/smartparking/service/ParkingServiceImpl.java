@@ -26,11 +26,12 @@ public class ParkingServiceImpl implements ParkingService {
 
     private final KendaraanAktifRepository aktifRepo;
     private final RiwayatParkirRepository riwayatRepo;
+    private final com.smartparking.repository.KapasitasRepository kapasitasRepo;
 
-    // Inject via constructor (tanpa Lombok)
-    public ParkingServiceImpl(KendaraanAktifRepository aktifRepo, RiwayatParkirRepository riwayatRepo) {
+    public ParkingServiceImpl(KendaraanAktifRepository aktifRepo, RiwayatParkirRepository riwayatRepo, com.smartparking.repository.KapasitasRepository kapasitasRepo) {
         this.aktifRepo = aktifRepo;
         this.riwayatRepo = riwayatRepo;
+        this.kapasitasRepo = kapasitasRepo;
     }
 
     // Factory method: buat Motor/Mobil berdasarkan jenis
@@ -64,11 +65,15 @@ public class ParkingServiceImpl implements ParkingService {
             listResponse.add(resp);
         }
 
+        Integer dbCapacity = kapasitasRepo.getTotalKapasitas();
+        int totalKapasitas = dbCapacity != null ? dbCapacity : 0;
+
         DashboardResponse dash = new DashboardResponse();
         dash.setKendaraanAktif(listAll.size());
         dash.setJumlahMobil(mobil);
         dash.setJumlahMotor(motor);
-        dash.setKapasitasTersedia(TarifConfig.KAPASITAS_TOTAL - listAll.size());
+        dash.setKapasitasTersedia(totalKapasitas - listAll.size());
+        dash.setTotalKapasitas(totalKapasitas);
         dash.setListAktif(listResponse);
         return dash;
     }
@@ -78,7 +83,10 @@ public class ParkingServiceImpl implements ParkingService {
         if (aktifRepo.existsByPlatNomor(req.getPlatNomor())) {
             throw new IllegalArgumentException("Kendaraan dengan plat " + req.getPlatNomor() + " sudah ada di dalam.");
         }
-        if (aktifRepo.count() >= TarifConfig.KAPASITAS_TOTAL) {
+        Integer dbCapacity = kapasitasRepo.getTotalKapasitas();
+        int totalKapasitas = dbCapacity != null ? dbCapacity : 0;
+
+        if (aktifRepo.count() >= totalKapasitas) {
             throw new RuntimeException("Kapasitas parkir penuh");
         }
 
@@ -144,19 +152,59 @@ public class ParkingServiceImpl implements ParkingService {
 
     @Override
     public RiwayatResponse getRiwayat(String tanggal, String jenis, String platNomor) {
-        // Simplified for this implementation without complex criteria builder
         List<RiwayatParkir> all = riwayatRepo.findAll();
         
-        long totalTransaksi = all.size();
-        long totalPendapatan = all.stream().mapToInt(RiwayatParkir::getTotalBayar).sum();
+        // Apply filters
+        List<RiwayatParkir> filtered = all.stream()
+            .filter(r -> {
+                // Filter by tanggal (match date part of waktuKeluar)
+                if (tanggal != null && !tanggal.isEmpty()) {
+                    String tgl = r.getWaktuKeluar().toLocalDate().toString(); // yyyy-MM-dd
+                    if (!tgl.equals(tanggal)) return false;
+                }
+                // Filter by jenis
+                if (jenis != null && !jenis.isEmpty()) {
+                    if (!r.getJenis().equalsIgnoreCase(jenis)) return false;
+                }
+                // Filter by platNomor (partial match, case-insensitive)
+                if (platNomor != null && !platNomor.isEmpty()) {
+                    if (!r.getPlatNomor().toUpperCase().contains(platNomor.toUpperCase())) return false;
+                }
+                return true;
+            })
+            .collect(java.util.stream.Collectors.toList());
+
+        long totalTransaksi = filtered.size();
+        long totalPendapatan = filtered.stream().mapToInt(RiwayatParkir::getTotalBayar).sum();
         double rataRata = totalTransaksi > 0 ? (double) totalPendapatan / totalTransaksi : 0;
+
+        // Build chart7Hari from all data (not filtered) for context
+        java.util.Map<String, long[]> dayMap = new java.util.LinkedHashMap<>();
+        for (RiwayatParkir r : all) {
+            String tgl = r.getWaktuKeluar().toLocalDate().toString();
+            dayMap.computeIfAbsent(tgl, k -> new long[]{0, 0});
+            dayMap.get(tgl)[0]++;
+            dayMap.get(tgl)[1] += r.getTotalBayar();
+        }
+        List<java.util.Map<String, Object>> chart7Hari = new ArrayList<>();
+        List<String> sortedDays = new ArrayList<>(dayMap.keySet());
+        java.util.Collections.sort(sortedDays);
+        int startIdx = Math.max(0, sortedDays.size() - 7);
+        for (int i = startIdx; i < sortedDays.size(); i++) {
+            String d = sortedDays.get(i);
+            java.util.Map<String, Object> entry = new java.util.HashMap<>();
+            entry.put("tanggal", d);
+            entry.put("jumlah", dayMap.get(d)[0]);
+            entry.put("pendapatan", dayMap.get(d)[1]);
+            chart7Hari.add(entry);
+        }
 
         RiwayatResponse resp = new RiwayatResponse();
         resp.setTotalTransaksi(totalTransaksi);
         resp.setTotalPendapatan(totalPendapatan);
         resp.setRataRata(rataRata);
-        resp.setTransaksi(all);
-        resp.setChart7Hari(new ArrayList<>());
+        resp.setTransaksi(filtered);
+        resp.setChart7Hari(chart7Hari);
         return resp;
     }
 

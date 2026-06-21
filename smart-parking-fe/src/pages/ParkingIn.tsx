@@ -63,7 +63,7 @@ const ParkingIn: React.FC = () => {
           {/* Main Form Area */}
           <div className="lg:col-span-2">
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-              <div className="bg-gradient-to-r from-orange-500 to-orange-600 p-6">
+              <div className="bg-gradient-to-br from-orange-500 to-orange-400 p-6">
                 <h2 className="text-xl font-bold text-white flex items-center gap-2">
                   <span><FontAwesomeIcon icon={faCarSide} /></span> Form Input Kendaraan
                 </h2>
@@ -102,12 +102,12 @@ const ParkingIn: React.FC = () => {
                       onClick={() => setJenis('Motor')}
                       className={`cursor-pointer rounded-xl border-2 p-4 flex flex-col items-center justify-center text-center transition-all ${
                         jenis === 'Motor' 
-                          ? 'border-green-500 bg-green-50 ring-2 ring-green-500/20' 
-                          : 'border-gray-200 hover:border-green-300'
+                          ? 'border-pink-500 bg-pink-50 ring-2 ring-pink-500/20' 
+                          : 'border-gray-200 hover:border-pink-300'
                       }`}
                     >
-                      <div className="text-4xl mb-2"><FontAwesomeIcon icon={faMotorcycle} /></div>
-                      <div className={`font-bold text-lg ${jenis === 'Motor' ? 'text-green-700' : 'text-gray-700'}`}>Motor</div>
+                      <div className={`text-4xl mb-2 ${jenis === 'Motor' ? 'text-pink-500' : 'text-pink-300'}`}><FontAwesomeIcon icon={faMotorcycle} /></div>
+                      <div className={`font-bold text-lg ${jenis === 'Motor' ? 'text-pink-700' : 'text-gray-700'}`}>Motor</div>
                       <div className="text-xs text-gray-500 mt-1 hidden sm:block">Sepeda motor, skuter, dll</div>
                     </div>
                     
@@ -119,7 +119,7 @@ const ParkingIn: React.FC = () => {
                           : 'border-gray-200 hover:border-blue-300'
                       }`}
                     >
-                      <div className="text-4xl mb-2"><FontAwesomeIcon icon={faCarSide} /></div>
+                      <div className={`text-4xl mb-2 ${jenis === 'Mobil' ? 'text-blue-500' : 'text-blue-300'}`}><FontAwesomeIcon icon={faCarSide} /></div>
                       <div className={`font-bold text-lg ${jenis === 'Mobil' ? 'text-blue-700' : 'text-gray-700'}`}>Mobil</div>
                       <div className="text-xs text-gray-500 mt-1 hidden sm:block">Mobil penumpang, SUV, MPV</div>
                     </div>
@@ -169,11 +169,11 @@ const ParkingIn: React.FC = () => {
             
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                <div className="p-4 border-b border-gray-100 bg-gray-50">
-                  <h3 className="font-bold text-gray-800 flex items-center gap-2"><span><FontAwesomeIcon icon={faBolt} /></span> Aksi Cepat</h3>
+                  <h3 className="font-bold text-gray-800 flex items-center gap-2"><span className="text-yellow-500 drop-shadow-sm"><FontAwesomeIcon icon={faBolt} /></span> Aksi Cepat</h3>
                </div>
                <div className="p-2">
                  <Link to="/" className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-lg text-gray-700 font-medium">
-                    <span className="w-8 h-8 rounded bg-gray-100 flex items-center justify-center text-xl"><FontAwesomeIcon icon={faChartSimple} /></span>
+                    <span className="w-8 h-8 rounded bg-orange-100 flex items-center justify-center text-brand-orange"><FontAwesomeIcon icon={faChartSimple} /></span>
                     Lihat Dashboard
                  </Link>
                </div>

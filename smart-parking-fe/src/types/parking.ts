@@ -13,6 +13,7 @@ export interface DashboardData {
   jumlahMobil: number;
   jumlahMotor: number;
   kapasitasTersedia: number;
+  totalKapasitas: number;
   listAktif: KendaraanAktif[];
 }
 

@@ -80,15 +80,33 @@ const FinancialReport: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-24">
-      <Navbar title="Report Keuangan" showBack={true} />
+    <div className="min-h-screen bg-gray-50 pb-24 print:bg-white print:p-0 print:m-0">
+      <div className="print:hidden">
+        <Navbar title="Report Keuangan" showBack={true} />
+      </div>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {error && (
-          <div className="bg-red-50 text-red-600 p-4 rounded-xl mb-6 border border-red-200">
-            <FontAwesomeIcon icon={faTriangleExclamation} /> {error}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 print:p-0 print:max-w-full">
+        {/* --- PRINT ONLY HEADER --- */}
+        <div className="hidden print:block mb-8 border-b-2 border-gray-800 pb-4 mt-4">
+          <div className="flex justify-between items-end">
+            <div>
+              <h1 className="text-3xl font-black text-gray-900">LAPORAN KEUANGAN PARKIR</h1>
+              <p className="text-gray-500 mt-1">Sistem Manajemen Parkir Cerdas</p>
+            </div>
+            <div className="text-right">
+              <p className="font-bold text-gray-800">Periode Laporan:</p>
+              <p className="text-gray-600">{filterBulan ? filterBulan : 'Semua Waktu'} - Dicetak: {new Date().toLocaleDateString('id-ID')}</p>
+            </div>
           </div>
-        )}
+        </div>
+
+        <div className="print:hidden">
+          {error && (
+            <div className="bg-red-50 text-red-600 p-4 rounded-xl mb-6 border border-red-200">
+              <FontAwesomeIcon icon={faTriangleExclamation} /> {error}
+            </div>
+          )}
+        </div>
 
         {loading && !data ? (
           <div className="flex items-center justify-center py-20">
@@ -97,65 +115,65 @@ const FinancialReport: React.FC = () => {
         ) : data && (
           <>
             {/* Stat Cards - Premium Design */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8 print:flex print:justify-between print:gap-4 print:mb-8">
               {/* Total Pendapatan */}
-              <div className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl p-5 text-white shadow-lg shadow-orange-500/20 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
+              <div className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl p-5 text-white shadow-lg shadow-orange-500/20 relative overflow-hidden print:border-2 print:border-gray-300 print:shadow-none print:bg-none print:text-gray-800 print:w-full">
+                <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 print:hidden"></div>
                 <div className="relative">
                   <div className="flex justify-between items-start mb-3">
-                    <h3 className="text-orange-100 font-medium text-sm">Total Pendapatan</h3>
-                    <span className="text-2xl"><FontAwesomeIcon icon={faMoneyBillWave} /></span>
+                    <h3 className="text-orange-100 font-medium text-sm print:text-gray-500">Total Pendapatan</h3>
+                    <span className="text-2xl print:hidden"><FontAwesomeIcon icon={faMoneyBillWave} /></span>
                   </div>
-                  <div className="text-2xl font-extrabold mb-1">{formatRupiah(data.totalPendapatan)}</div>
-                  <div className="text-xs text-orange-200">Seluruh periode</div>
+                  <div className="text-2xl font-extrabold mb-1 print:text-gray-900">{formatRupiah(data.totalPendapatan)}</div>
+                  <div className="text-xs text-orange-200 print:hidden">Seluruh periode</div>
                 </div>
               </div>
 
               {/* Total Transaksi */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-16 h-16 bg-blue-50 rounded-full -translate-y-1/2 translate-x-1/2"></div>
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 relative overflow-hidden print:border-2 print:border-gray-300 print:shadow-none print:w-full">
+                <div className="absolute top-0 right-0 w-16 h-16 bg-blue-50 rounded-full -translate-y-1/2 translate-x-1/2 print:hidden"></div>
                 <div className="relative">
                   <div className="flex justify-between items-start mb-3">
                     <h3 className="text-gray-500 font-medium text-sm">Total Transaksi</h3>
-                    <span className="text-2xl"><FontAwesomeIcon icon={faFileLines} /></span>
+                    <span className="text-2xl print:hidden"><FontAwesomeIcon icon={faFileLines} /></span>
                   </div>
                   <div className="text-2xl font-extrabold text-gray-800 mb-1">{data.totalTransaksi}</div>
-                  <div className="text-xs text-gray-400">Semua transaksi selesai</div>
+                  <div className="text-xs text-gray-400 print:hidden">Semua transaksi selesai</div>
                 </div>
               </div>
 
               {/* Rata-rata */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-16 h-16 bg-purple-50 rounded-full -translate-y-1/2 translate-x-1/2"></div>
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 relative overflow-hidden print:border-2 print:border-gray-300 print:shadow-none print:w-full">
+                <div className="absolute top-0 right-0 w-16 h-16 bg-purple-50 rounded-full -translate-y-1/2 translate-x-1/2 print:hidden"></div>
                 <div className="relative">
                   <div className="flex justify-between items-start mb-3">
                     <h3 className="text-gray-500 font-medium text-sm">Rata-rata / Transaksi</h3>
-                    <span className="text-2xl"><FontAwesomeIcon icon={faCalculator} /></span>
+                    <span className="text-2xl print:hidden"><FontAwesomeIcon icon={faCalculator} /></span>
                   </div>
                   <div className="text-2xl font-extrabold text-gray-800 mb-1">{formatRupiah(data.rataRata)}</div>
-                  <div className="text-xs text-gray-400">Per transaksi parkir</div>
+                  <div className="text-xs text-gray-400 print:hidden">Per transaksi parkir</div>
                 </div>
               </div>
 
               {/* Pendapatan Hari Ini */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-16 h-16 bg-green-50 rounded-full -translate-y-1/2 translate-x-1/2"></div>
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 relative overflow-hidden print:border-2 print:border-gray-300 print:shadow-none print:w-full">
+                <div className="absolute top-0 right-0 w-16 h-16 bg-green-50 rounded-full -translate-y-1/2 translate-x-1/2 print:hidden"></div>
                 <div className="relative">
                   <div className="flex justify-between items-start mb-3">
                     <h3 className="text-gray-500 font-medium text-sm">Hari Ini</h3>
-                    <span className="text-2xl"><FontAwesomeIcon icon={faCalendarDay} /></span>
+                    <span className="text-2xl print:hidden"><FontAwesomeIcon icon={faCalendarDay} /></span>
                   </div>
-                  <div className="text-2xl font-extrabold text-green-600 mb-1">{formatRupiah(pendapatanHariIni)}</div>
-                  <div className="text-xs text-gray-400">{transaksiHariIni} transaksi hari ini</div>
+                  <div className="text-2xl font-extrabold text-green-600 mb-1 print:text-gray-900">{formatRupiah(pendapatanHariIni)}</div>
+                  <div className="text-xs text-gray-400 print:hidden">{transaksiHariIni} transaksi hari ini</div>
                 </div>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 xl:grid-cols-4 gap-8 print:block">
               {/* Main Content */}
-              <div className="xl:col-span-3 space-y-6">
+              <div className="xl:col-span-3 space-y-6 print:space-y-0">
                 {/* Filter */}
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 print:hidden">
                   <h3 className="font-bold text-gray-800 mb-4"><FontAwesomeIcon icon={faCaretDown} /> Filter Laporan</h3>
                   <div className="flex flex-wrap gap-4 items-end">
                     <div className="flex-1 min-w-[200px]">
@@ -177,66 +195,69 @@ const FinancialReport: React.FC = () => {
                 </div>
 
                 {/* Chart - Pendapatan */}
-                {last7Days.length > 0 && (
-                  <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-                    <div className="flex justify-between items-center mb-6">
-                      <h3 className="font-bold text-gray-800"><FontAwesomeIcon icon={faChartLine} /> Grafik Pendapatan (7 Hari Terakhir)</h3>
-                      <div className="flex bg-gray-100 rounded-lg p-0.5">
-                        <button
-                          onClick={() => setChartType('area')}
-                          className={`px-3 py-1 rounded-md text-xs font-medium transition-all ${chartType === 'area' ? 'bg-white text-brand-orange shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
-                        >
-                          Area
-                        </button>
-                        <button
-                          onClick={() => setChartType('bar')}
-                          className={`px-3 py-1 rounded-md text-xs font-medium transition-all ${chartType === 'bar' ? 'bg-white text-brand-orange shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
-                        >
-                          Bar
-                        </button>
+                <div className="print:hidden">
+                  {last7Days.length > 0 && (
+                    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 mb-6">
+                      <div className="flex justify-between items-center mb-6">
+                        <h3 className="font-bold text-gray-800"><FontAwesomeIcon icon={faChartLine} /> Grafik Pendapatan (7 Hari Terakhir)</h3>
+                        <div className="flex bg-gray-100 rounded-lg p-0.5">
+                          <button
+                            onClick={() => setChartType('area')}
+                            className={`px-3 py-1 rounded-md text-xs font-medium transition-all ${chartType === 'area' ? 'bg-white text-brand-orange shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                          >
+                            Area
+                          </button>
+                          <button
+                            onClick={() => setChartType('bar')}
+                            className={`px-3 py-1 rounded-md text-xs font-medium transition-all ${chartType === 'bar' ? 'bg-white text-brand-orange shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                          >
+                            Bar
+                          </button>
+                        </div>
+                      </div>
+                      <div className="h-72 w-full">
+                        <ResponsiveContainer width="100%" height="100%">
+                          {chartType === 'area' ? (
+                            <AreaChart data={last7Days}>
+                              <defs>
+                                <linearGradient id="colorPendapatan" x1="0" y1="0" x2="0" y2="1">
+                                  <stop offset="5%" stopColor="#F97316" stopOpacity={0.3}/>
+                                  <stop offset="95%" stopColor="#F97316" stopOpacity={0}/>
+                                </linearGradient>
+                              </defs>
+                              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                              <XAxis dataKey="tanggal" fontSize={12} tickMargin={10} tickFormatter={formatTanggalShort} />
+                              <YAxis fontSize={12} tickFormatter={(v) => `${(v/1000).toFixed(0)}k`} />
+                              <Tooltip
+                                formatter={(value: any) => [formatRupiah(Number(value)), 'Pendapatan']}
+                                labelFormatter={(label) => `Tanggal: ${label}`}
+                                contentStyle={{ borderRadius: '12px', border: '1px solid #f3f4f6' }}
+                              />
+                              <Area type="monotone" dataKey="pendapatan" stroke="#F97316" strokeWidth={2.5} fill="url(#colorPendapatan)" />
+                            </AreaChart>
+                          ) : (
+                            <BarChart data={last7Days}>
+                              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                              <XAxis dataKey="tanggal" fontSize={12} tickMargin={10} tickFormatter={formatTanggalShort} />
+                              <YAxis fontSize={12} tickFormatter={(v) => `${(v/1000).toFixed(0)}k`} />
+                              <Tooltip
+                                formatter={(value: any) => [formatRupiah(Number(value)), 'Pendapatan']}
+                                labelFormatter={(label) => `Tanggal: ${label}`}
+                                contentStyle={{ borderRadius: '12px', border: '1px solid #f3f4f6' }}
+                              />
+                              <Bar dataKey="pendapatan" fill="#F97316" radius={[6, 6, 0, 0]} />
+                            </BarChart>
+                          )}
+                        </ResponsiveContainer>
                       </div>
                     </div>
-                    <div className="h-72 w-full">
-                      <ResponsiveContainer width="100%" height="100%">
-                        {chartType === 'area' ? (
-                          <AreaChart data={last7Days}>
-                            <defs>
-                              <linearGradient id="colorPendapatan" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#F97316" stopOpacity={0.3}/>
-                                <stop offset="95%" stopColor="#F97316" stopOpacity={0}/>
-                              </linearGradient>
-                            </defs>
-                            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                            <XAxis dataKey="tanggal" fontSize={12} tickMargin={10} tickFormatter={formatTanggalShort} />
-                            <YAxis fontSize={12} tickFormatter={(v) => `${(v/1000).toFixed(0)}k`} />
-                            <Tooltip
-                              formatter={(value: any) => [formatRupiah(Number(value)), 'Pendapatan']}
-                              labelFormatter={(label) => `Tanggal: ${label}`}
-                              contentStyle={{ borderRadius: '12px', border: '1px solid #f3f4f6' }}
-                            />
-                            <Area type="monotone" dataKey="pendapatan" stroke="#F97316" strokeWidth={2.5} fill="url(#colorPendapatan)" />
-                          </AreaChart>
-                        ) : (
-                          <BarChart data={last7Days}>
-                            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                            <XAxis dataKey="tanggal" fontSize={12} tickMargin={10} tickFormatter={formatTanggalShort} />
-                            <YAxis fontSize={12} tickFormatter={(v) => `${(v/1000).toFixed(0)}k`} />
-                            <Tooltip
-                              formatter={(value: any) => [formatRupiah(Number(value)), 'Pendapatan']}
-                              labelFormatter={(label) => `Tanggal: ${label}`}
-                              contentStyle={{ borderRadius: '12px', border: '1px solid #f3f4f6' }}
-                            />
-                            <Bar dataKey="pendapatan" fill="#F97316" radius={[6, 6, 0, 0]} />
-                          </BarChart>
-                        )}
-                      </ResponsiveContainer>
-                    </div>
-                  </div>
-                )}
+                  )}
+                </div>
 
                 {/* Table - Daily Report */}
-                <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                  <div className="p-5 border-b border-gray-100">
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden print:shadow-none print:border-none print:mt-8">
+                  <div className="hidden print:block mb-4 font-bold text-lg text-gray-800">Rincian Pendapatan Harian:</div>
+                  <div className="p-5 border-b border-gray-100 print:hidden">
                     <h3 className="font-bold text-gray-800 flex items-center gap-2">
                       <span><FontAwesomeIcon icon={faChartSimple} /></span> Ringkasan Pendapatan Harian
                     </h3>
@@ -289,7 +310,7 @@ const FinancialReport: React.FC = () => {
               </div>
 
               {/* Side Panel */}
-              <div className="xl:col-span-1 space-y-6">
+              <div className="xl:col-span-1 space-y-6 print:hidden">
                 {/* Breakdown Motor vs Mobil */}
                 <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                   <div className="p-4 border-b border-gray-100 bg-gray-50">
@@ -335,7 +356,7 @@ const FinancialReport: React.FC = () => {
                 {/* Quick Actions */}
                 <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                   <div className="p-4 border-b border-gray-100 bg-gray-50">
-                    <h3 className="font-bold text-gray-800 flex items-center gap-2"><span><FontAwesomeIcon icon={faBolt} /></span> Aksi Cepat</h3>
+                    <h3 className="font-bold text-gray-800 flex items-center gap-2"><span className="text-yellow-500 drop-shadow-sm"><FontAwesomeIcon icon={faBolt} /></span> Aksi Cepat</h3>
                   </div>
                   <div className="p-2 space-y-1">
                     <a href={parkingApi.exportCsvUrl} target="_blank" rel="noreferrer" className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-lg text-gray-700 font-medium w-full text-left transition-colors">

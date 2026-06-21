@@ -49,7 +49,7 @@ const Dashboard: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50 pb-24">
       <Navbar />
-      
+
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {error && (
           <div className="bg-red-50 text-red-600 p-4 rounded-xl mb-6 border border-red-200">
@@ -61,30 +61,36 @@ const Dashboard: React.FC = () => {
           <>
             {/* Stat Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-              <StatCard 
-                label="Kendaraan Aktif" 
-                value={data.kendaraanAktif} 
-                icon={<FontAwesomeIcon icon={faCarSide} />} 
-                subLabel={`${((data.kendaraanAktif / 100) * 100).toFixed(0)}% terisi`}
-                progress={(data.kendaraanAktif / 100) * 100}
+              <StatCard
+                label="Kendaraan Aktif"
+                value={data.kendaraanAktif}
+                icon={<FontAwesomeIcon icon={faCarSide} />}
+                subLabel={`${data.totalKapasitas > 0 ? ((data.kendaraanAktif / data.totalKapasitas) * 100).toFixed(0) : 0}% terisi`}
+                progress={data.totalKapasitas > 0 ? (data.kendaraanAktif / data.totalKapasitas) * 100 : 0}
+                color="teal"
               />
-              <StatCard 
-                label="Mobil" 
-                value={data.jumlahMobil} 
-                icon={<FontAwesomeIcon icon={faCar} />} 
-                subLabel={`${data.kendaraanAktif > 0 ? ((data.jumlahMobil / data.kendaraanAktif) * 100).toFixed(0) : 0}% dari total`}
+              <StatCard
+                label="Mobil"
+                value={data.jumlahMobil}
+                icon={<FontAwesomeIcon icon={faCar} />}
+                subLabel={`${data.totalKapasitas > 0 ? ((data.jumlahMobil / data.totalKapasitas) * 100).toFixed(0) : 0}% dari kapasitas`}
+                progress={data.totalKapasitas > 0 ? (data.jumlahMobil / data.totalKapasitas) * 100 : 0}
+                color="blue"
               />
-              <StatCard 
-                label="Motor" 
-                value={data.jumlahMotor} 
-                icon={<FontAwesomeIcon icon={faMotorcycle} />} 
-                subLabel={`${data.kendaraanAktif > 0 ? ((data.jumlahMotor / data.kendaraanAktif) * 100).toFixed(0) : 0}% dari total`}
+              <StatCard
+                label="Motor"
+                value={data.jumlahMotor}
+                icon={<FontAwesomeIcon icon={faMotorcycle} />}
+                subLabel={`${data.totalKapasitas > 0 ? ((data.jumlahMotor / data.totalKapasitas) * 100).toFixed(0) : 0}% dari kapasitas`}
+                progress={data.totalKapasitas > 0 ? (data.jumlahMotor / data.totalKapasitas) * 100 : 0}
+                color="pink"
               />
-              <StatCard 
-                label="Kapasitas Tersedia" 
-                value={data.kapasitasTersedia} 
-                icon={<FontAwesomeIcon icon={faSquareParking} />} 
-                subLabel="Dari 100 slot total"
+              <StatCard
+                label="Kapasitas Tersedia"
+                value={data.kapasitasTersedia}
+                icon={<FontAwesomeIcon icon={faSquareParking} />}
+                subLabel={`Dari ${data.totalKapasitas} slot total`}
+                color="purple"
               />
             </div>
 
@@ -95,7 +101,7 @@ const Dashboard: React.FC = () => {
                   <div className="p-5 border-b border-gray-100 flex justify-between items-center">
                     <div>
                       <h2 className="text-lg font-bold text-gray-800 flex items-center gap-2">
-                        <span><FontAwesomeIcon icon={faCarSide} /></span> Kendaraan Aktif di Area Parkir
+                        <span className="text-blue-500"><FontAwesomeIcon icon={faCarSide} /></span> Kendaraan Aktif di Area Parkir
                       </h2>
                       <p className="text-sm text-gray-500 mt-1">Kendaraan yang belum melakukan checkout</p>
                     </div>
@@ -103,7 +109,7 @@ const Dashboard: React.FC = () => {
                       {data.kendaraanAktif} Kendaraan
                     </span>
                   </div>
-                  
+
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm text-left">
                       <thead className="bg-gray-50 text-gray-600 font-medium border-b border-gray-100">
@@ -145,7 +151,7 @@ const Dashboard: React.FC = () => {
                       </tbody>
                     </table>
                   </div>
-                  
+
                   <div className="p-4 bg-gray-50 border-t border-gray-100 text-xs text-gray-500 flex justify-between items-center">
                     <span className="italic"><FontAwesomeIcon icon={faArrowsRotate} /> Update terakhir: {formatWaktu(lastUpdate.toISOString()).split(' ')[1]}</span>
                     {data.listAktif.length > 5 && (
@@ -162,10 +168,10 @@ const Dashboard: React.FC = () => {
                 <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                   <div className="p-5 border-b border-gray-100">
                     <h2 className="text-lg font-bold text-gray-800 flex items-center gap-2">
-                      <span><FontAwesomeIcon icon={faBolt} /></span> Aksi Cepat
+                      <span className="text-yellow-500 drop-shadow-sm"><FontAwesomeIcon icon={faBolt} /></span> Aksi Cepat
                     </h2>
                   </div>
-                  
+
                   <div className="divide-y divide-gray-100">
                     <Link to="/masuk" className="flex items-center p-5 hover:bg-green-50 transition-colors group">
                       <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center text-green-600 text-xl mr-4 group-hover:bg-green-200 transition-colors">
@@ -177,7 +183,7 @@ const Dashboard: React.FC = () => {
                       </div>
                       <div className="text-gray-400 group-hover:text-green-600">›</div>
                     </Link>
-                    
+
                     <Link to="/keluar" className="flex items-center p-5 hover:bg-red-50 transition-colors group">
                       <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center text-red-600 text-xl mr-4 group-hover:bg-red-200 transition-colors">
                         <FontAwesomeIcon icon={faArrowRightFromBracket} />
@@ -189,15 +195,15 @@ const Dashboard: React.FC = () => {
                       <div className="text-gray-400 group-hover:text-red-600">›</div>
                     </Link>
 
-                    <Link to="/riwayat" className="flex items-center p-5 hover:bg-gray-50 transition-colors group">
-                      <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-gray-600 text-xl mr-4 group-hover:bg-gray-200 transition-colors">
+                    <Link to="/riwayat" className="flex items-center p-5 hover:bg-purple-50 transition-colors group">
+                      <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center text-purple-600 text-xl mr-4 group-hover:bg-purple-200 transition-colors">
                         <FontAwesomeIcon icon={faArrowsRotate} />
                       </div>
                       <div className="flex-1">
                         <h3 className="font-bold text-gray-900">Riwayat Parkir</h3>
                         <p className="text-sm text-gray-500">Lihat histori lengkap</p>
                       </div>
-                      <div className="text-gray-400 group-hover:text-gray-900">›</div>
+                      <div className="text-gray-400 group-hover:text-purple-600">›</div>
                     </Link>
                   </div>
                 </div>

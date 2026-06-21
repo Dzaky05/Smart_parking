@@ -8,6 +8,7 @@ import ParkingOut from './pages/ParkingOut';
 import History from './pages/History';
 import FinancialReport from './pages/FinancialReport';
 import ActiveParking from './pages/ActiveParking';
+import KapasitasPage from './pages/Kapasitas';
 
 function App() {
   return (
@@ -38,6 +39,11 @@ function App() {
           <Route path="/aktif" element={
             <ProtectedRoute>
               <ActiveParking />
+            </ProtectedRoute>
+          } />
+          <Route path="/kapasitas" element={
+            <ProtectedRoute>
+              <KapasitasPage />
             </ProtectedRoute>
           } />
           <Route path="/report" element={

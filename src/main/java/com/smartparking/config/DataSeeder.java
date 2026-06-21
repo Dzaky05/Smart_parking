@@ -17,17 +17,17 @@ public class DataSeeder implements CommandLineRunner {
     @Override
     public void run(String... args) {
         // Seed default admin user
-        if (!userRepository.existsByUsername("admin")) {
-            User admin = new User("admin", "admin123", "ADMIN", "Administrator");
+        if (!userRepository.existsByUsername("admin@gmail.com")) {
+            User admin = new User("admin@gmail.com", "admin123", "ADMIN", "Administrator");
             userRepository.save(admin);
-            System.out.println("✅ Default admin user created (admin/admin123)");
+            System.out.println("✅ Default admin user created (admin@gmail.com/admin123)");
         }
 
         // Seed default petugas user
-        if (!userRepository.existsByUsername("petugas")) {
-            User petugas = new User("petugas", "petugas123", "PETUGAS", "Petugas Parkir");
+        if (!userRepository.existsByUsername("petugas@gmail.com")) {
+            User petugas = new User("petugas@gmail.com", "petugas123", "PETUGAS", "Petugas Parkir");
             userRepository.save(petugas);
-            System.out.println("✅ Default petugas user created (petugas/petugas123)");
+            System.out.println("✅ Default petugas user created (petugas@gmail.com/petugas123)");
         }
     }
 }

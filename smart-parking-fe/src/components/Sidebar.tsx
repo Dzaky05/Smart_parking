@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCarSide, faMoneyBillWave, faClipboardList, faArrowRightFromBracket, faArrowRightToBracket, faChartSimple, faUser, faDoorOpen, faShieldHalved, faTicket } from '@fortawesome/free-solid-svg-icons';
+import { faCarSide, faMoneyBillWave, faClipboardList, faArrowRightFromBracket, faArrowRightToBracket, faChartSimple, faUser, faDoorOpen, faShieldHalved, faTicket, faSquareParking } from '@fortawesome/free-solid-svg-icons';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -37,12 +37,13 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   };
 
   const menuItems = [
-    { path: '/', label: 'Dashboard', icon: <FontAwesomeIcon icon={faChartSimple} />, always: true },
-    { path: '/masuk', label: 'Parkir Masuk', icon: <FontAwesomeIcon icon={faArrowRightToBracket} />, always: true },
-    { path: '/keluar', label: 'Parkir Keluar', icon: <FontAwesomeIcon icon={faArrowRightFromBracket} />, always: true },
-    { path: '/aktif', label: 'Kendaraan Aktif', icon: <FontAwesomeIcon icon={faCarSide} />, always: true },
-    { path: '/riwayat', label: 'Riwayat Parkir', icon: <FontAwesomeIcon icon={faClipboardList} />, always: true },
-    { path: '/report', label: 'Report Keuangan', icon: <FontAwesomeIcon icon={faMoneyBillWave} />, always: false, adminOnly: true },
+    { path: '/', label: 'Dashboard', icon: <FontAwesomeIcon icon={faChartSimple} className="text-orange-500" />, always: true },
+    { path: '/masuk', label: 'Parkir Masuk', icon: <FontAwesomeIcon icon={faArrowRightToBracket} className="text-green-500" />, always: true },
+    { path: '/keluar', label: 'Parkir Keluar', icon: <FontAwesomeIcon icon={faArrowRightFromBracket} className="text-red-500" />, always: true },
+    { path: '/aktif', label: 'Kendaraan Aktif', icon: <FontAwesomeIcon icon={faCarSide} className="text-blue-500" />, always: true },
+    { path: '/kapasitas', label: 'Kapasitas', icon: <FontAwesomeIcon icon={faSquareParking} className="text-indigo-500" />, always: true },
+    { path: '/riwayat', label: 'Riwayat Parkir', icon: <FontAwesomeIcon icon={faClipboardList} className="text-purple-500" />, always: true },
+    { path: '/report', label: 'Report Keuangan', icon: <FontAwesomeIcon icon={faMoneyBillWave} className="text-teal-500" />, always: false, adminOnly: true },
   ];
 
   const filteredMenu = menuItems.filter(item => {
@@ -99,11 +100,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                   to={item.path}
                   className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
                     isActive
-                      ? 'bg-orange-50 text-orange-600 shadow-sm'
+                      ? 'bg-orange-50 text-gray-900 shadow-sm'
                       : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                   }`}
                 >
-                  <span className={`text-lg ${isActive ? '' : 'grayscale-[30%]'}`}>{item.icon}</span>
+                  <span className={`text-lg flex-shrink-0 w-6 text-center ${isActive ? '' : 'opacity-80 grayscale-[30%]'}`}>{item.icon}</span>
                   <span>{item.label}</span>
                   {isActive && (
                     <div className="ml-auto w-1.5 h-1.5 rounded-full bg-orange-500"></div>
