@@ -6,9 +6,11 @@ interface ConfirmModalProps {
   body: React.ReactNode;
   onConfirm: () => void;
   onCancel: () => void;
+  confirmText?: string;
+  danger?: boolean;
 }
 
-const ConfirmModal: React.FC<ConfirmModalProps> = ({ show, title, body, onConfirm, onCancel }) => {
+const ConfirmModal: React.FC<ConfirmModalProps> = ({ show, title, body, onConfirm, onCancel, confirmText = 'Ya, Proses Keluar', danger = false }) => {
   if (!show) return null;
 
   return (
@@ -41,9 +43,9 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({ show, title, body, onConfir
             </button>
             <button 
               onClick={onConfirm}
-              className="flex-1 px-4 py-2.5 bg-brand-orange text-white rounded-lg font-medium hover:bg-orange-600 transition-colors shadow-sm"
+              className={`flex-1 px-4 py-2.5 text-white rounded-lg font-medium transition-colors shadow-sm ${danger ? 'bg-red-500 hover:bg-red-600' : 'bg-brand-orange hover:bg-orange-600'}`}
             >
-              Ya, Proses Keluar
+              {confirmText}
             </button>
           </div>
         </div>

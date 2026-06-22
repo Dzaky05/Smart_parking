@@ -1,6 +1,12 @@
 package com.smartparking.service;
 
-import com.smartparking.config.TarifConfig;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+
 import com.smartparking.dto.request.ParkingKeluarRequest;
 import com.smartparking.dto.request.ParkingMasukRequest;
 import com.smartparking.dto.response.DashboardResponse;
@@ -14,12 +20,6 @@ import com.smartparking.model.entity.KendaraanAktif;
 import com.smartparking.model.entity.RiwayatParkir;
 import com.smartparking.repository.KendaraanAktifRepository;
 import com.smartparking.repository.RiwayatParkirRepository;
-import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class ParkingServiceImpl implements ParkingService {
@@ -206,6 +206,17 @@ public class ParkingServiceImpl implements ParkingService {
         resp.setTransaksi(filtered);
         resp.setChart7Hari(chart7Hari);
         return resp;
+    }
+
+    @Override
+    public void deleteRiwayat(Long id, String role) {
+        if (role == null || !role.equalsIgnoreCase("ADMIN")) {
+            throw new IllegalArgumentException("Hanya admin yang dapat menghapus data riwayat");
+        }
+        if (!riwayatRepo.existsById(id)) {
+            throw new RuntimeException("Data riwayat tidak ditemukan");
+        }
+        riwayatRepo.deleteById(id);
     }
 
     @Override

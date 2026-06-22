@@ -68,4 +68,12 @@ public class ParkingController {
         headers.setContentDispositionFormData("attachment", "riwayat_parkir.csv");
         return new ResponseEntity<>(csv, headers, HttpStatus.OK);
     }
+
+    @DeleteMapping("/riwayat/{id}")
+    public ResponseEntity<ApiResponse<Void>> deleteRiwayat(
+            @PathVariable Long id,
+            @RequestHeader("X-User-Role") String role) {
+        parkingService.deleteRiwayat(id, role);
+        return ResponseEntity.ok(new ApiResponse<>("success", "Data riwayat berhasil dihapus", null));
+    }
 }

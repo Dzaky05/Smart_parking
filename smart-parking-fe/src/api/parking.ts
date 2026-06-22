@@ -41,5 +41,12 @@ export const parkingApi = {
     return response.data;
   },
 
+  deleteRiwayat: async (id: number, role: string) => {
+    const response = await api.delete<ApiResponse<null>>(`/riwayat/${id}`, {
+      headers: { 'X-User-Role': role },
+    });
+    return response.data;
+  },
+
   exportCsvUrl: 'http://localhost:8080/api/riwayat/export-csv'
 };

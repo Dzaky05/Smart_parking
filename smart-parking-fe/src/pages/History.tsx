@@ -2,14 +2,19 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Navbar from '../components/Navbar';
 
 import VehicleBadge from '../components/VehicleBadge';
+import ConfirmModal from '../components/ConfirmModal';
+import { useAuth } from '../context/AuthContext';
 import { parkingApi } from '../api/parking';
-import type { RiwayatResponse } from '../types/parking';
+import type { RiwayatResponse, RiwayatItem } from '../types/parking';
 import { formatRupiah, formatDurasi, formatWaktu } from '../utils/format';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChartSimple, faTriangleExclamation, faPrint, faArrowsRotate, faCircleInfo, faCircleCheck, faBolt, faFileArrowDown, faCaretDown, faMoneyBill, faCalculator, faFileLines, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
+import { faChartSimple, faTriangleExclamation, faPrint, faArrowsRotate, faCircleInfo, faCircleCheck, faBolt, faFileArrowDown, faCaretDown, faMoneyBill, faCalculator, faFileLines, faMagnifyingGlass, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 const History: React.FC = () => {
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'ADMIN';
+
   const [data, setData] = useState<RiwayatResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -18,6 +23,10 @@ const History: React.FC = () => {
   const [filterJenis, setFilterJenis] = useState('');
   const [filterPlat, setFilterPlat] = useState('');
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedRiwayat, setSelectedRiwayat] = useState<RiwayatItem | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const fetchRiwayat = useCallback(async (tanggal: string, jenis: string, plat: string) => {
     setLoading(true);
@@ -50,6 +59,27 @@ const History: React.FC = () => {
     setFilterTanggal('');
     setFilterJenis('');
     setFilterPlat('');
+  };
+
+  const handleDeleteClick = (item: RiwayatItem) => {
+    setSelectedRiwayat(item);
+    setShowDeleteModal(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!selectedRiwayat || !user) return;
+    setDeleting(true);
+    try {
+      await parkingApi.deleteRiwayat(selectedRiwayat.id, user.role);
+      setShowDeleteModal(false);
+      setSelectedRiwayat(null);
+      await fetchRiwayat(filterTanggal, filterJenis, filterPlat);
+    } catch (err: any) {
+      setError(err?.response?.data?.message || 'Gagal menghapus data riwayat');
+      setShowDeleteModal(false);
+    } finally {
+      setDeleting(false);
+    }
   };
 
   return (
@@ -193,13 +223,14 @@ const History: React.FC = () => {
                           <th className="px-5 py-3">Waktu Keluar</th>
                           <th className="px-5 py-3">Durasi</th>
                           <th className="px-5 py-3">Total Bayar</th>
+                          {isAdmin && <th className="px-5 py-3 print:hidden">Aksi</th>}
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-100">
                         {loading ? (
-                          <tr><td colSpan={6} className="px-5 py-8 text-center text-gray-500">Loading...</td></tr>
+                          <tr><td colSpan={isAdmin ? 7 : 6} className="px-5 py-8 text-center text-gray-500">Loading...</td></tr>
                         ) : data.transaksi.length === 0 ? (
-                          <tr><td colSpan={6} className="px-5 py-8 text-center text-gray-500">Tidak ada riwayat parkir yang ditemukan.</td></tr>
+                          <tr><td colSpan={isAdmin ? 7 : 6} className="px-5 py-8 text-center text-gray-500">Tidak ada riwayat parkir yang ditemukan.</td></tr>
                         ) : (
                           data.transaksi.map((item) => (
                             <tr key={item.id} className="hover:bg-gray-50 transition-colors">
@@ -209,6 +240,17 @@ const History: React.FC = () => {
                               <td className="px-5 py-4 whitespace-nowrap text-gray-600">{formatWaktu(item.waktuKeluar)}</td>
                               <td className="px-5 py-4 text-gray-600">{formatDurasi(item.durasiMenit)}</td>
                               <td className="px-5 py-4 font-bold text-gray-900">{formatRupiah(item.totalBayar)}</td>
+                              {isAdmin && (
+                                <td className="px-5 py-4 print:hidden">
+                                  <button
+                                    onClick={() => handleDeleteClick(item)}
+                                    title="Hapus riwayat"
+                                    className="w-8 h-8 rounded-lg bg-red-50 text-red-500 hover:bg-red-100 flex items-center justify-center transition-colors"
+                                  >
+                                    <FontAwesomeIcon icon={faTrash} />
+                                  </button>
+                                </td>
+                              )}
                             </tr>
                           ))
                         )}
@@ -254,6 +296,25 @@ const History: React.FC = () => {
           </>
         )}
       </main>
+
+      <ConfirmModal
+        show={showDeleteModal}
+        title="Hapus Riwayat Parkir?"
+        body={
+          selectedRiwayat ? (
+            <div className="text-left bg-gray-50 p-4 rounded-lg space-y-2 border border-gray-100 mx-auto max-w-xs">
+              <p><strong>Plat:</strong> {selectedRiwayat.platNomor} ({selectedRiwayat.jenis})</p>
+              <p><strong>Keluar:</strong> {formatWaktu(selectedRiwayat.waktuKeluar)}</p>
+              <p><strong>Total Bayar:</strong> {formatRupiah(selectedRiwayat.totalBayar)}</p>
+              <p className="text-red-500 font-medium pt-2 border-t mt-2">Data yang dihapus tidak dapat dikembalikan.</p>
+            </div>
+          ) : null
+        }
+        confirmText={deleting ? 'Menghapus...' : 'Ya, Hapus'}
+        danger
+        onConfirm={handleConfirmDelete}
+        onCancel={() => { setShowDeleteModal(false); setSelectedRiwayat(null); }}
+      />
     </div>
   );
 };
