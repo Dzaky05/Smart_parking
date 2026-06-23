@@ -1,7 +1,7 @@
-# Smart Parking System 🅿️
+# Smart Parking System
 
 <p align="center">
-  <img src="parking.svg" width="300" alt="Smart Parking System" />
+  <img src="Fastag_animation.svg" width="300" alt="Smart Parking System" />
 </p>
 
 Aplikasi web full-stack untuk mengelola sistem parkir pintar yang memantau kapasitas real-time, mencatat kendaraan masuk/keluar, dan menghasilkan laporan keuangan otomatis.
