@@ -80,6 +80,11 @@ public class ParkingServiceImpl implements ParkingService {
 
     @Override
     public KendaraanAktifResponse parkingMasuk(ParkingMasukRequest req) {
+        String plat = req.getPlatNomor();
+        if (plat == null || !plat.trim().matches("^[a-zA-Z]{1,2}\\s*\\d{1,4}\\s*[a-zA-Z]{0,3}$")) {
+            throw new IllegalArgumentException("Format plat nomor tidak valid. Contoh yang benar: B 1234 ABC");
+        }
+
         if (aktifRepo.existsByPlatNomor(req.getPlatNomor())) {
             throw new IllegalArgumentException("Kendaraan dengan plat " + req.getPlatNomor() + " sudah ada di dalam.");
         }
@@ -220,19 +225,36 @@ public class ParkingServiceImpl implements ParkingService {
     }
 
     @Override
-    public byte[] exportCsv() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("ID,Plat Nomor,Jenis,Masuk,Keluar,Durasi (Menit),Lama (Jam),Total Bayar\n");
-        for (RiwayatParkir r : riwayatRepo.findAll()) {
-            sb.append(r.getId()).append(",")
-              .append(r.getPlatNomor()).append(",")
-              .append(r.getJenis()).append(",")
-              .append(r.getWaktuMasuk()).append(",")
-              .append(r.getWaktuKeluar()).append(",")
-              .append(r.getDurasiMenit()).append(",")
-              .append(r.getLamaJam()).append(",")
-              .append(r.getTotalBayar()).append("\n");
+    public byte[] exportExcel() {
+        try (org.apache.poi.xssf.usermodel.XSSFWorkbook workbook = new org.apache.poi.xssf.usermodel.XSSFWorkbook();
+             java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream()) {
+            
+            org.apache.poi.ss.usermodel.Sheet sheet = workbook.createSheet("Riwayat Parkir");
+            
+            org.apache.poi.ss.usermodel.Row headerRow = sheet.createRow(0);
+            String[] headers = {"ID", "Plat Nomor", "Jenis", "Masuk", "Keluar", "Durasi (Menit)", "Lama (Jam)", "Total Bayar"};
+            for (int i = 0; i < headers.length; i++) {
+                org.apache.poi.ss.usermodel.Cell cell = headerRow.createCell(i);
+                cell.setCellValue(headers[i]);
+            }
+            
+            int rowIdx = 1;
+            for (RiwayatParkir r : riwayatRepo.findAll()) {
+                org.apache.poi.ss.usermodel.Row row = sheet.createRow(rowIdx++);
+                row.createCell(0).setCellValue(r.getId() != null ? r.getId() : 0);
+                row.createCell(1).setCellValue(r.getPlatNomor() != null ? r.getPlatNomor() : "");
+                row.createCell(2).setCellValue(r.getJenis() != null ? r.getJenis() : "");
+                row.createCell(3).setCellValue(r.getWaktuMasuk() != null ? r.getWaktuMasuk().toString() : "");
+                row.createCell(4).setCellValue(r.getWaktuKeluar() != null ? r.getWaktuKeluar().toString() : "");
+                row.createCell(5).setCellValue(r.getDurasiMenit() != null ? r.getDurasiMenit() : 0);
+                row.createCell(6).setCellValue(r.getLamaJam() != null ? r.getLamaJam() : 0);
+                row.createCell(7).setCellValue(r.getTotalBayar() != null ? r.getTotalBayar() : 0);
+            }
+            
+            workbook.write(out);
+            return out.toByteArray();
+        } catch (java.io.IOException e) {
+            throw new RuntimeException("Gagal membuat file Excel", e);
         }
-        return sb.toString().getBytes();
     }
 }

@@ -213,8 +213,12 @@ Total Bayar: ${formatRupiah(struk.totalBayar)}
 
                 <div className="p-6">
                   {error && (
-                    <div className="bg-red-50 text-red-600 p-3 rounded-lg mb-6 border border-red-200 text-sm">
-                      <FontAwesomeIcon icon={faTriangleExclamation} /> {error}
+                    <div className="bg-red-600 text-white p-3 rounded-lg mb-6 shadow-sm text-sm flex items-center gap-2">
+                    <span className="relative flex items-center justify-center">
+                      <span className="absolute w-1 h-2 bg-black mt-0.5 z-0 rounded-sm"></span>
+                      <FontAwesomeIcon icon={faTriangleExclamation} className="text-amber-500 text-base relative z-10" />
+                    </span> 
+                      <span className="font-medium">{error}</span>
                     </div>
                   )}
 

@@ -15,6 +15,6 @@ public interface ParkingService {
     List<KendaraanAktifResponse> getKendaraanAktif();
     StrukResponse parkingKeluar(ParkingKeluarRequest req);
     RiwayatResponse getRiwayat(String tanggal, String jenis, String platNomor);
-    byte[] exportCsv();
+    byte[] exportExcel();
     void deleteRiwayat(Long id, String role);
 }

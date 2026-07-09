@@ -45,8 +45,12 @@ const ActiveParking: React.FC = () => {
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {error && (
-          <div className="bg-red-50 text-red-600 p-4 rounded-xl mb-6 border border-red-200">
-            <FontAwesomeIcon icon={faTriangleExclamation} /> {error}
+          <div className="bg-red-600 text-white p-3 rounded-lg mb-6 shadow-sm text-sm flex items-center gap-2">
+            <span className="relative flex items-center justify-center">
+              <span className="absolute w-1 h-2 bg-black mt-0.5 z-0 rounded-sm"></span>
+              <FontAwesomeIcon icon={faTriangleExclamation} className="text-amber-500 text-base relative z-10" />
+            </span> 
+            <span className="font-medium">{error}</span>
           </div>
         )}
 

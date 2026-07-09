@@ -60,13 +60,13 @@ public class ParkingController {
         return ResponseEntity.ok(new ApiResponse<>("success", "Data riwayat berhasil diambil", resp));
     }
 
-    @GetMapping("/riwayat/export-csv")
-    public ResponseEntity<byte[]> exportCsv() {
-        byte[] csv = parkingService.exportCsv();
+    @GetMapping("/riwayat/export-excel")
+    public ResponseEntity<byte[]> exportExcel() {
+        byte[] excel = parkingService.exportExcel();
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.parseMediaType("text/csv"));
-        headers.setContentDispositionFormData("attachment", "riwayat_parkir.csv");
-        return new ResponseEntity<>(csv, headers, HttpStatus.OK);
+        headers.setContentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
+        headers.setContentDispositionFormData("attachment", "riwayat_parkir.xlsx");
+        return new ResponseEntity<>(excel, headers, HttpStatus.OK);
     }
 
     @DeleteMapping("/riwayat/{id}")

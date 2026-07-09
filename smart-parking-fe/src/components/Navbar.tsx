@@ -35,8 +35,8 @@ const Navbar: React.FC<NavbarProps> = ({ title, showBack = false }) => {
           <div className="flex justify-between h-16 items-center">
             <div className="flex items-center">
               {showBack ? (
-                <Link to="/" className="flex items-center text-gray-500 hover:text-brand-orange transition-colors mr-4">
-                  <span className="text-xl mr-1">←</span> 
+                <Link to="/" className="flex items-center bg-brand-orange hover:bg-orange-600 text-white transition-colors mr-4 px-4 py-2 rounded-lg font-medium shadow-sm">
+                  <span className="text-xl mr-2">←</span> 
                   <span className="hidden sm:inline">Kembali ke Dashboard</span>
                 </Link>
               ) : (

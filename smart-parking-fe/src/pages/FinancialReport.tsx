@@ -102,8 +102,12 @@ const FinancialReport: React.FC = () => {
 
         <div className="print:hidden">
           {error && (
-            <div className="bg-red-50 text-red-600 p-4 rounded-xl mb-6 border border-red-200">
-              <FontAwesomeIcon icon={faTriangleExclamation} /> {error}
+            <div className="bg-red-600 text-white p-3 rounded-lg mb-6 shadow-sm text-sm flex items-center gap-2">
+              <span className="relative flex items-center justify-center">
+                <span className="absolute w-1 h-2 bg-black mt-0.5 z-0 rounded-sm"></span>
+                <FontAwesomeIcon icon={faTriangleExclamation} className="text-amber-500 text-base relative z-10" />
+              </span> 
+              <span className="font-medium">{error}</span>
             </div>
           )}
         </div>
@@ -359,9 +363,9 @@ const FinancialReport: React.FC = () => {
                     <h3 className="font-bold text-gray-800 flex items-center gap-2"><span className="text-yellow-500 drop-shadow-sm"><FontAwesomeIcon icon={faBolt} /></span> Aksi Cepat</h3>
                   </div>
                   <div className="p-2 space-y-1">
-                    <a href={parkingApi.exportCsvUrl} target="_blank" rel="noreferrer" className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-lg text-gray-700 font-medium w-full text-left transition-colors">
+                    <a href={parkingApi.exportExcelUrl} target="_blank" rel="noreferrer" className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-lg text-gray-700 font-medium w-full text-left transition-colors">
                       <span className="w-8 h-8 rounded bg-green-100 flex items-center justify-center text-green-600 text-lg"><FontAwesomeIcon icon={faFileArrowDown} /></span>
-                      Export CSV
+                      Export Excel
                     </a>
                     <button onClick={() => window.print()} className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-lg text-gray-700 font-medium w-full text-left transition-colors">
                       <span className="w-8 h-8 rounded bg-blue-100 flex items-center justify-center text-blue-600 text-lg"><FontAwesomeIcon icon={faPrint} /></span>

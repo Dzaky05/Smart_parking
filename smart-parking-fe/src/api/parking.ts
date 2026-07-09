@@ -48,5 +48,5 @@ export const parkingApi = {
     return response.data;
   },
 
-  exportCsvUrl: 'http://localhost:8080/api/riwayat/export-csv'
+  exportExcelUrl: 'http://localhost:8080/api/riwayat/export-excel'
 };
