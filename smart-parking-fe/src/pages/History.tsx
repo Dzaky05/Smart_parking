@@ -9,7 +9,7 @@ import type { RiwayatResponse, RiwayatItem } from '../types/parking';
 import { formatRupiah, formatDurasi, formatWaktu } from '../utils/format';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChartSimple, faTriangleExclamation, faPrint, faArrowsRotate, faCircleInfo, faCircleCheck, faBolt, faFileArrowDown, faCaretDown, faMoneyBill, faCalculator, faFileLines, faMagnifyingGlass, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faChartSimple, faTriangleExclamation, faPrint, faArrowsRotate, faCircleInfo, faCircleCheck, faBolt, faFileArrowDown, faFloppyDisk, faMoneyBill, faCalculator, faFileLines, faMagnifyingGlass, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 const History: React.FC = () => {
   const { user } = useAuth();

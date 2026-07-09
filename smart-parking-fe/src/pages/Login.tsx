@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import api from "../api/axios";
-import { Car, ShieldCheck, UserCog, Eye, EyeOff, AlertTriangle, Loader2 } from "lucide-react";
+import { ShieldCheck, UserCog, Eye, EyeOff, AlertTriangle, Loader2 } from "lucide-react";
 import LoginTurntable3D from "../components/LoginTurntable3D";
 
 export default function LoginPage() {

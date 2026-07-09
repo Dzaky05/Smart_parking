@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import api from '../api/axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faPenToSquare, faTrash, faSquareParking, faMapLocationDot } from '@fortawesome/free-solid-svg-icons';
-import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
 import StatCard from '../components/StatCard';
 
