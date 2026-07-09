@@ -1,0 +1,4 @@
+{
+  "buildCommand": "cd smart-parking-fe && npm install && npm run build",
+  "outputDirectory": "smart-parking-fe/dist"
+}
